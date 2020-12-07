@@ -1,4 +1,5 @@
-import pygame
+import pygame, sys
 
-pygame.init
 screen = pygame.display.set_mode((1280, 720))
+clock = pygame.time.Clock()
+
