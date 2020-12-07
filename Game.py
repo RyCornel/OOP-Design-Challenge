@@ -22,10 +22,13 @@ class Meteor(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(path)
         self.rect = self.image.get_rect(center = (x_pos, y_pos))
+        self.x_speed = x_speed
+        self.y_speed = y_speed
 
     def update(self):
-        self.rect.center = pygame.mouse.get_pos()
-        self.screen_constrain()
+        self.rect.centerx += self.x_speed
+        self.rect.centery += self.y_speed
+        
 
     def screen_constrain(self):
         if self.rect.right >= 1280:
@@ -42,7 +45,7 @@ spaceship = Spaceship("spaceship.png", 640, 500, 10)
 spaceship_group = pygame.sprite.GroupSingle()
 spaceship_group.add(spaceship)
 
-meteor1 = Meteor("Meteor1.png", 450, 650, 50, 50)
+meteor1 = Meteor("Meteor1.png", 400, -100, 1, 3)
 meteor_group = pygame.sprite.Group()
 meteor_group.add(meteor1)
 
@@ -56,5 +59,6 @@ while True:
     spaceship_group.draw(screen)
     meteor_group.draw(screen)
     spaceship_group.update()
+    meteor_group.update()
     pygame.display.update()
     clock.tick(120)
