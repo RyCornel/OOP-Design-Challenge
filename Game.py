@@ -1,5 +1,5 @@
 import pygame, sys, random
- 
+ #Spacship Class
 class Spaceship(pygame.sprite.Sprite):
     def __init__(self, path, x_pos, y_pos, speed):
         super().__init__()
@@ -17,6 +17,7 @@ class Spaceship(pygame.sprite.Sprite):
             self.rect.left = 0
     
 
+#Meteor Class
 class Meteor(pygame.sprite.Sprite):
     def __init__(self, path, x_pos, y_pos, x_speed, y_speed):
         super().__init__()
@@ -29,12 +30,18 @@ class Meteor(pygame.sprite.Sprite):
         self.rect.centerx += self.x_speed
         self.rect.centery += self.y_speed
         
+        #Despawn Meteors
+        if self.rect.centery >= 800:
+            self.kill()
 
     def screen_constrain(self):
         if self.rect.right >= 1280:
             self.rect.right = 1280
         if self.rect.left <=  0:
             self.rect.left = 0
+
+    
+
 
 
 pygame.init()
@@ -51,8 +58,10 @@ meteor_group = pygame.sprite.Group()
 
 #Meteor Timer
 meteor_event = pygame.USEREVENT
-pygame.time.set_timer(meteor_event, 250)
+pygame.time.set_timer(meteor_event, 200)
 
+
+#While Loop
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -65,6 +74,7 @@ while True:
             random_x_speed = random.randrange(-1, 1)
             random_y_speed = random.randrange( 4, 10)
             meteor = Meteor(meteor_path, random_x_pos, random_y_pos, random_x_speed, random_y_speed)
+            meteor_group.add(meteor)
 
     screen.fill((42, 45, 51))
     spaceship_group.draw(screen)
