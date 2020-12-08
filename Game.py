@@ -9,12 +9,11 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x_pos, y_pos))
         self.shield_surface = pygame.image.load("shield.png")
         self.health = 5
-
-
+        
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
         self.screen_constrain()
-        self.display_health
+        self.display_health()
 
     def screen_constrain(self):
         if self.rect.right >= 1280:
@@ -23,11 +22,12 @@ class Spaceship(pygame.sprite.Sprite):
             self.rect.left = 0
 
     def display_health(self):
-        for index, shield in enumerate(range(self.health)):
-            screen.blit(self.shield_surface, (10 + index * 40, 10))
-    
+        for index,shield in enumerate(range(self.health)):
+            screen.blit(self.shield_surface, (index * 40,10))
+
     def get_damage(self, damage_amount):
         self.health -= damage_amount
+
  
 #Meteor Class
 class Meteor(pygame.sprite.Sprite):
@@ -67,6 +67,25 @@ class Laser(pygame.sprite.Sprite):
         #Despawn Lasers
         if self.rect.centery <= -100:
             self.kill()
+
+
+#Health Class
+class Health(pygame.sprite.Sprite):
+    def __init__(self, path):
+        super().__init__()
+        self.shield_surface = pygame.image.load(path)
+        self.health = 5
+
+    def display_health(self):
+        for index, shield in enumerate(range(self.health)):
+            screen.blit(self.shield_surface, (10 + index * 40, 10))
+    
+    def get_damage(self, damage_amount):
+        self.health -= damage_amount
+
+    def update(self):
+        self.display_health()
+
 
 #Main Method for Game
 def main_game():
@@ -118,6 +137,12 @@ spaceship_group.add(spaceship)
 meteor_group = pygame.sprite.Group()
 #meteor_group.add(meteor1)
 
+#Health Group
+health_shield = Health("shield.png")
+health_group = pygame.sprite.Group()
+health_group.add(health_shield)
+
+
 #Meteor Timer
 meteor_event = pygame.USEREVENT
 pygame.time.set_timer(meteor_event, 200)
@@ -144,13 +169,16 @@ while True:
             meteor = Meteor(meteor_path, random_x_pos, random_y_pos, random_x_speed, random_y_speed)
             meteor_group.add(meteor)
 
+        #Laser If Statement
         if event.type == pygame.MOUSEBUTTONDOWN:
             new_laser = Laser("Laser.png", event.pos, 20)
             laser_group.add(new_laser)
 
+        #Reset If Satement
         if event.type == pygame.MOUSEBUTTONDOWN and spaceship_group.sprite.health <= 0:
             spaceship_group.sprite.health = 5
             meteor_group.empty()
+            score = 0
 
         #if event.type == pygame.K_SPACE:
             #new_laser = Laser("Laser.png", event.pos, 20)
