@@ -1,22 +1,34 @@
 import pygame, sys, random
- #Spacship Class
+ 
+
+#Spacship Class
 class Spaceship(pygame.sprite.Sprite):
     def __init__(self, path, x_pos, y_pos):
         super().__init__()
         self.image = pygame.image.load(path)
         self.rect = self.image.get_rect(center = (x_pos, y_pos))
+        self.shield_surface = pygame.image.load("shield.png")
+        self.health = 5
+
 
     def update(self):
         self.rect.center = pygame.mouse.get_pos()
         self.screen_constrain()
+        self.display_health
 
     def screen_constrain(self):
         if self.rect.right >= 1280:
             self.rect.right = 1280
         if self.rect.left <=  0:
             self.rect.left = 0
-    
 
+    def display_health(self):
+        for index, shield in enumerate(range(self.health)):
+            screen.blit(self.shield_surface, (10 + index * 40, 10))
+    
+    def get_damage(self, damage_amount):
+        self.health -= damage_amount
+ 
 #Meteor Class
 class Meteor(pygame.sprite.Sprite):
     def __init__(self, path, x_pos, y_pos, x_speed, y_speed):
@@ -51,7 +63,10 @@ class Laser(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.centery -= self.speed
-
+        
+        #Despawn Lasers
+        if self.rect.centery <= -100:
+            self.kill()
 
 #PyGame
 pygame.init()
@@ -95,9 +110,14 @@ while True:
             meteor_group.add(meteor)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            new_laser = Laser("Laser.png", event.pos, 5)
+            new_laser = Laser("Laser.png", event.pos, 20)
             laser_group.add(new_laser)
-        
+
+        #if event.type == pygame.K_SPACE:
+            #new_laser = Laser("Laser.png", event.pos, 20)
+            #laser_group.add(new_laser)
+
+    
 
     screen.fill((42, 45, 51))
 
@@ -110,7 +130,16 @@ while True:
     spaceship_group.update()
     meteor_group.update()
     laser_group.update()
+    
+
+    #Check for Collisions
+    if pygame.sprite.spritecollide(spaceship_group.sprite, meteor_group, True):
+        spaceship_group.sprite.get_damage(1)
+    
+    #Check if Laser Hits Meteor 
+    for laser in laser_group:
+        pygame.sprite.spritecollide(laser, meteor_group, True)
+        
+
     pygame.display.update()
-
-
     clock.tick(120)
