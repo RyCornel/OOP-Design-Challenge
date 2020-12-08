@@ -41,8 +41,13 @@ class Meteor(pygame.sprite.Sprite):
             self.rect.left = 0
 
     
-
-
+#Laser Class
+class Laser(pygame.sprite.Sprite):
+    def __init__(self, path, pos, speed):
+        super().__init__()
+        self.image = pygame.image.load(path)
+        self.rect = self.image.get_rect(center = pos)
+        self.speed = speed
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
